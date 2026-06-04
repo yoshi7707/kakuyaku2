@@ -12,7 +12,9 @@ export async function POST(request: Request) {
         area: typeof item.area === 'string' ? item.area.trim() : '',
         kakuyaku: typeof item.kakuyaku === 'string' ? item.kakuyaku.trim() : '',
       }))
-      .filter((item) => item.name && item.area && item.kakuyaku);
+      .filter((item: { name: string; area: string; kakuyaku: string }) =>
+        item.name && item.area && item.kakuyaku
+      );
 
     if (!validItems.length) {
       return NextResponse.json(
