@@ -4,8 +4,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  // url      = env("MONGODB_URI")
-  url      = "mongodb+srv://yoshi77_e:yy7777777@cluster0.qlquqch.mongodb.net/kakuyaku2?retryWrites=true&w=majority"
+  url      = env("MONGODB_URI")
 }
 
 model Submission {
