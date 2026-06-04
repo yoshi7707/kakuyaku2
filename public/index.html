@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>川口支部 御生誕祭確約</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --deep: #16213e;
+    --accent: #e94560;
+    --gold: #f5a623;
+    --muted: #8892b0;
+    --surface: #0f3460;
+    --card: #1a2a4a;
+    --check: #00d4aa;
+    --border: rgba(255,255,255,0.08);
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--ink);
+    color: #ccd6f6;
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--deep) 0%, var(--surface) 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-emblem {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #e6f1ff;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .stat-pill strong {
+    color: var(--check);
+    font-size: 15px;
+  }
+
+  .stat-pill.total strong {
+    color: var(--gold);
+  }
+
+  .btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .btn:hover { background: #ff5a75; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(233,69,96,0.4); }
+  .btn:active { transform: none; }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.15); box-shadow: none; }
+
+  .filter-bar {
+    max-width: 1400px;
+    margin: 16px auto 0;
+    padding: 0 24px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    color: var(--muted);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: white; }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  .search-wrap {
+    margin-left: auto;
+    position: relative;
+  }
+
+  .search-wrap input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 16px 7px 36px;
+    color: #ccd6f6;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    width: 200px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  main {
+    max-width: 1400px;
+    margin: 24px auto;
+    padding: 0 24px 48px;
+  }
+
+  .group-section {
+    margin-bottom: 36px;
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .group-name {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #e6f1ff;
+    letter-spacing: 0.1em;
+  }
+
+  .group-badge {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .group-badge strong {
+    color: var(--check);
+  }
+
+  .group-progress {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .progress-bar {
+    width: 120px;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--check), #00ff88);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-size: 12px;
+    color: var(--check);
+    font-weight: 500;
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 8px;
+  }
+
+  .member-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .member-card:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: #1e3055;
+    transform: translateY(-1px);
+  }
+
+  .member-card.checked {
+    background: rgba(0, 212, 170, 0.12);
+    border-color: var(--check);
+  }
+
+  .member-card.checked .member-name {
+    color: yellow;
+  }
+
+  .member-card.hidden {
+    display: none;
+  }
+
+  .check-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid rgba(255,255,255,0.2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .member-card.checked .check-box {
+    background: var(--check);
+    border-color: var(--check);
+  }
+
+  .check-mark {
+    display: none;
+    color: #0f2a1e;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .member-card.checked .check-mark {
+    display: block;
+  }
+
+  .member-name {
+    font-size: 13px;
+    color: white;
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--deep);
+    border: 1px solid var(--check);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    color: var(--check);
+    font-size: 14px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    transform: none;
+    opacity: 1;
+  }
+
+  .divider {
+    width: 3px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .empty-message {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; }
+    main { padding: 0 12px 48px; }
+    .filter-bar { padding: 0 12px; }
+    .search-wrap input { width: 150px; }
+    .members-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-title">
+      <div class="header-emblem">⛩</div>
+      <div>
+        <h1>川口支部 <span>行事確約シート</span></h1>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-pill total">確約済み: <strong id="total-checked">0</strong></div>
+      <div class="stat-pill">総人数: <strong id="total-all" style="color:#a8b2d8">0</strong></div>
+      <button class="btn btn-secondary" onclick="resetAll()">✕ リセット</button>
+      <button class="btn" onclick="downloadExcel()">📥 Excelダウンロード</button>
+      <a class="btn" href="/kakuyaku" style="text-decoration:none;">🧭 確約を保存する</a>
+    </div>
+  </div>
+</header>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterGroup('all', this)">すべて</button>
+  <button class="filter-btn" onclick="filterGroup('門前', this)">門前</button>
+  <button class="filter-btn" onclick="filterGroup('ポーラスター', this)">ポーラスター</button>
+  <button class="filter-btn" onclick="filterGroup('東', this)">東</button>
+  <button class="filter-btn" onclick="filterGroup('checked', this)">✓ 確約済み</button>
+  <button class="filter-btn" onclick="filterGroup('unchecked', this)">□ 未確約</button>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="名前を検索..." oninput="filterSearch(this.value)">
+  </div>
+</div>
+
+<main id="main-content"></main>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let DATA = [];
+const DATA_ENDPOINT = '/api/submit';
+const AREA_ORDER = ['門前','ポーラスター','東'];
+
+async function loadData() {
+  try {
+    const response = await fetch(DATA_ENDPOINT, { cache: 'no-store' });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.error || response.statusText || 'Failed to fetch data');
+    }
+    const submissions = await response.json();
+    const groups = {};
+    submissions.forEach((item) => {
+      const area = item.area || 'その他';
+      if (!groups[area]) groups[area] = [];
+      groups[area].push({
+        name: item.name || '',
+        checked: item.kakuyaku === '確約' || item.kakuyaku === '確約済み',
+      });
+    });
+    DATA = AREA_ORDER.filter((area) => groups[area]).map((area) => ({
+      group: area,
+      members: groups[area],
+    }));
+    Object.keys(groups).sort().forEach((area) => {
+      if (!AREA_ORDER.includes(area)) {
+        DATA.push({ group: area, members: groups[area] });
+      }
+    });
+    loadState();
+    renderAll();
+  } catch (error) {
+    showToast('データ取得エラー: ' + (error instanceof Error ? error.message : String(error)));
+  }
+}
+
+// Load state from localStorage
+const STORAGE_KEY = 'kakuyaku_state';
+let state = {};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+  // Apply saved state to DATA
+  DATA.forEach(g => {
+    g.members.forEach(m => {
+            const key = `${g.group}|${m.name}`;
+      if (state[key] !== undefined) m.checked = state[key];
+    });
+  });
+}
+
+function saveState() {
+  DATA.forEach(g => {
+    g.members.forEach(m => {
+            state[`${g.group}|${m.name}`] = m.checked;
+    });
+  });
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function renderAll() {
+  const main = document.getElementById('main-content');
+  main.innerHTML = '';
+
+  let totalChecked = 0;
+  let totalAll = 0;
+
+  DATA.forEach(g => {
+    const groupChecked = g.members.filter(m => m.checked).length;
+    const groupTotal = g.members.length;
+    totalChecked += groupChecked;
+    totalAll += groupTotal;
+
+    const section = document.createElement('div');
+    section.className = 'group-section';
+    section.dataset.group = g.group;
+
+    const pct = groupTotal > 0 ? Math.round(groupChecked / groupTotal * 100) : 0;
+
+    section.innerHTML = `
+      <div class="group-header">
+        <div class="divider"></div>
+        <div class="group-name">${g.group}</div>
+        <div class="group-badge"><strong>${groupChecked}</strong> / ${groupTotal}</div>
+        <div class="group-progress">
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="progress-pct">${pct}%</div>
+        </div>
+      </div>
+      <div class="members-grid" id="grid-${g.group}"></div>
+    `;
+    main.appendChild(section);
+
+    const grid = section.querySelector(`#grid-${g.group}`);
+    g.members.forEach(m => {
+      const card = document.createElement('div');
+      card.className = `member-card${m.checked ? ' checked' : ''}`;
+      card.dataset.name = m.name;
+      card.dataset.group = g.group;
+      card.dataset.checked = m.checked ? '1' : '0';
+      card.innerHTML = `
+        <div class="check-box"><span class="check-mark">✓</span></div>
+        <div class="member-name">${m.name}</div>
+      `;
+      card.addEventListener('click', () => toggleMember(m, card, g));
+      grid.appendChild(card);
+    });
+  });
+
+  document.getElementById('total-checked').textContent = totalChecked;
+  document.getElementById('total-all').textContent = totalAll;
+
+  applyFilter();
+}
+
+function toggleMember(member, card, group) {
+  member.checked = !member.checked;
+  card.classList.toggle('checked', member.checked);
+  card.dataset.checked = member.checked ? '1' : '0';
+
+  const groupChecked = group.members.filter(m => m.checked).length;
+  const groupTotal = group.members.length;
+  const pct = Math.round(groupChecked / groupTotal * 100);
+
+  const section = card.closest('.group-section');
+  section.querySelector('.group-badge').innerHTML = `<strong>${groupChecked}</strong> / ${groupTotal}`;
+  section.querySelector('.progress-fill').style.width = pct + '%';
+  section.querySelector('.progress-pct').textContent = pct + '%';
+
+  const totalChecked = DATA.reduce((s, g) => s + g.members.filter(m => m.checked).length, 0);
+  document.getElementById('total-checked').textContent = totalChecked;
+
+  saveState();
+  saveMemberStatus(member, group);
+  applyFilter();
+}
+
+async function saveMemberStatus(member, group) {
+  try {
+    const response = await fetch(DATA_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: member.name,
+        area: group.group,
+        kakuyaku: member.checked ? '確約' : '未確約',
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || response.statusText || '保存に失敗しました');
+    }
+    showToast(`${member.name} の確約を保存しました`);
+  } catch (error) {
+    showToast('保存エラー: ' + (error instanceof Error ? error.message : String(error)));
+  }
+}
+
+function applyFilter() {
+  const cards = document.querySelectorAll('.member-card');
+  const q = currentSearch.toLowerCase();
+
+  cards.forEach(card => {
+    const matchGroup = currentFilter === 'all' || 
+      card.dataset.group === currentFilter ||
+      (currentFilter === 'checked' && card.dataset.checked === '1') ||
+      (currentFilter === 'unchecked' && card.dataset.checked === '0');
+    const matchSearch = !q || card.dataset.name.includes(q);
+    card.classList.toggle('hidden', !(matchGroup && matchSearch));
+  });
+
+  // Hide empty sections
+  document.querySelectorAll('.group-section').forEach(section => {
+    const visible = section.querySelectorAll('.member-card:not(.hidden)').length;
+    section.style.display = visible === 0 ? 'none' : '';
+  });
+}
+
+function filterGroup(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+
+function filterSearch(q) {
+  currentSearch = q;
+  applyFilter();
+}
+
+function resetAll() {
+  if (!confirm('全ての確約チェックをリセットしますか？')) return;
+  DATA.forEach(g => g.members.forEach(m => m.checked = false));
+  state = {};
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  renderAll();
+  showToast('リセットしました');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function numToCol(n) {
+  let s = '';
+  while (n > 0) {
+    n--;
+    s = String.fromCharCode(65 + (n % 26)) + s;
+    n = Math.floor(n / 26);
+  }
+  return s;
+}
+
+function downloadExcel() {
+  const wb = XLSX.utils.book_new();
+
+  // Build a flat list of all checked names per group for summary sheet
+  const summaryRows = [['グループ', '氏名', '確約']];
+  DATA.forEach(g => {
+    g.members.forEach(m => {
+      summaryRows.push([g.group, m.name, m.checked ? '○' : '']);
+    });
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(summaryRows);
+  ws['!cols'] = [{wch:14},{wch:18},{wch:6}];
+  XLSX.utils.book_append_sheet(wb, ws, '確約一覧');
+
+  // Stats sheet
+  const statsRows = [['グループ', '確約数', '総人数', '確約率']];
+  DATA.forEach(g => {
+    const checked = g.members.filter(m => m.checked).length;
+    const total = g.members.length;
+    statsRows.push([g.group, checked, total, total > 0 ? (checked/total*100).toFixed(1)+'%' : '0%']);
+  });
+  const totalChecked = DATA.reduce((s,g) => s + g.members.filter(m=>m.checked).length, 0);
+  const totalAll = DATA.reduce((s,g) => s + g.members.length, 0);
+  statsRows.push(['合計', totalChecked, totalAll, totalAll > 0 ? (totalChecked/totalAll*100).toFixed(1)+'%' : '0%']);
+  const ws2 = XLSX.utils.aoa_to_sheet(statsRows);
+  ws2['!cols'] = [{wch:14},{wch:8},{wch:8},{wch:8}];
+  XLSX.utils.book_append_sheet(wb, ws2, '集計');
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+  XLSX.writeFile(wb, `川口支部確約シート_${dateStr}.xlsx`);
+  showToast('Excelをダウンロードしました');
+}
+
+// Init
+loadData();
+</script>
+</body>
+</html>
